@@ -1,0 +1,13 @@
+---
+
+- name: Install phpredis from git
+  file:
+    state: absent
+    path: "{{ mongodb_path }}/"
+
+- name: Create Mongodb configuration file
+  template: src=mongod.conf.j2 dest=/etc/mongod.conf
+  notify:
+  - service:
+    name: mongodb
+    state: restarted

@@ -1,0 +1,45 @@
+---
+
+- name: Creates directory
+  file: path={{ download_tmp }} state=directory
+
+- name: Unarchive rabbitmq-c-0.8.0.tar.gz
+  unarchive: src=rabbitmq-c-0.8.0.tar.gz dest={{ download_tmp }}
+
+- name: Configure
+  command: 'chdir={{ download_tmp }}/rabbitmq-c-0.8.0 ./configure'
+
+- name: Make rabbitmq-c
+  command: 'chdir={{ download_tmp }}/rabbitmq-c-0.8.0 make'
+
+- name: Make Install The rabbitmq-c
+  command: 'chdir={{ download_tmp }}/rabbitmq-c-0.8.0 make install'
+
+- name: Unarchive amqp-1.9.3.tgz
+  unarchive: src=amqp-1.9.3.tgz dest={{ download_tmp }}
+
+- name: Do Phpize Amqp
+  command: 'chdir={{ download_tmp }}/amqp-1.9.3 phpize'
+
+- name: Configure
+  command: 'chdir={{ download_tmp }}/amqp-1.9.3 ./configure'
+
+- name: Make Amqp
+  command: 'chdir={{ download_tmp }}/amqp-1.9.3 make'
+
+- name: Make Install The Amqp
+  command: 'chdir={{ download_tmp }}/amqp-1.9.3 make install'
+
+- name: Add amqp.so to php modules
+  copy: src=amqp.ini dest=/etc/php/7.1/mods-available/amqp.ini force=yes
+
+- name: Create symlink to amqp.so for cli
+  file: src=/etc/php/7.1/mods-available/amqp.ini dest=/etc/php/7.1/cli/conf.d/amqp.ini state=link
+
+- name: Create symlink to amqp.so for fpm
+  file: src=/etc/php/7.1/mods-available/amqp.ini dest=/etc/php/7.1/fpm/conf.d/amqp.ini state=link
+
+- name: Restart php-fpm
+  service:
+    name: php7.1-fpm
+    state: restarted
