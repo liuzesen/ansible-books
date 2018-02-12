@@ -1,13 +1,23 @@
 ---
 
-- name: Clean Mongodb database
-  file:
-    state: absent
-    path: "{{ mongodb_path }}/"
+- name: Creates directory
+  file: path={{ mongodb_path }} state=directory mode=0777
+
+- name: Import the public key used by the package management system.
+  command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+
+- name: Create a list file for MongoDB
+  command: echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list
+
+#- name: Reload local package database
+#  apt: update_cache=yes upgrade=safe cache_valid_time=10
+
+- name: Install the package "mongodb"
+  apt:
+    name: mongodb-org
+    state: present
 
 - name: Create Mongodb configuration file
   template: src=mongod.conf.j2 dest=/etc/mongod.conf
   notify:
-  - service:
-    name: mongodb
-    state: restarted
+    - restart mongod

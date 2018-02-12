@@ -30,16 +30,15 @@
 - name: Make Install The Amqp
   command: 'chdir={{ download_tmp }}/amqp-1.9.3 make install'
 
-- name: Add amqp.so to php modules
-  copy: src=amqp.ini dest=/etc/php/7.1/mods-available/amqp.ini force=yes
+- name: Gen the ini file
+  copy: content="extension=amqp.so" dest={{ so_ini_path }}/amqp.ini force=yes
 
-- name: Create symlink to amqp.so for cli
-  file: src=/etc/php/7.1/mods-available/amqp.ini dest=/etc/php/7.1/cli/conf.d/amqp.ini state=link
+- name: Fetch ini
+  fetch: dest=roles/phpext/templates/ src={{ so_ini_path }}/{{ item }} flat=yes
+  with_items:
+    - amqp.ini
 
-- name: Create symlink to amqp.so for fpm
-  file: src=/etc/php/7.1/mods-available/amqp.ini dest=/etc/php/7.1/fpm/conf.d/amqp.ini state=link
-
-- name: Restart php-fpm
-  service:
-    name: php7.1-fpm
-    state: restarted
+- name: Fetch so
+  fetch: dest=roles/phpext/files/ src={{ so_path }}/{{ item }} flat=yes
+  with_items:
+    - amqp.so

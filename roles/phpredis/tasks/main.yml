@@ -1,13 +1,32 @@
 ---
 
-- name: Install phpredis from git
-  file:
-    state: absent
-    path: "{{ mongodb_path }}/"
+- name: Creates directory
+  file: path={{ download_tmp }} state=directory
 
-- name: Create Mongodb configuration file
-  template: src=mongod.conf.j2 dest=/etc/mongod.conf
-  notify:
-  - service:
-    name: mongodb
-    state: restarted
+- name: Unarchive redis-3.1.5.tgz
+  unarchive: src=redis-3.1.5.tgz dest={{ download_tmp }}
+
+- name: Do Phpize redis
+  command: 'chdir={{ download_tmp }}/redis-3.1.5 phpize'
+
+- name: Configure
+  command: 'chdir={{ download_tmp }}/redis-3.1.5 ./configure'
+
+- name: Make redis
+  command: 'chdir={{ download_tmp }}/redis-3.1.5 make'
+
+- name: Make Install The redis
+  command: 'chdir={{ download_tmp }}/redis-3.1.5 make install'
+
+- name: Gen the ini file
+  copy: content="extension=redis.so" dest={{ so_ini_path }}/redis.ini force=yes
+
+- name: Fetch ini
+  fetch: dest=roles/phpext/templates/ src={{ so_ini_path }}/{{ item }} flat=yes
+  with_items:
+    - redis.ini
+
+- name: Fetch so
+  fetch: dest=roles/phpext/files/ src={{ so_path }}/{{ item }} flat=yes
+  with_items:
+    - redis.so

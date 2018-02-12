@@ -1,0 +1,30 @@
+---
+
+- name: Install the package "mongodb"
+  apt:
+    name: erlang
+    state: present
+
+- name: Install the package "mongodb"
+  apt:
+    name: rabbitmq-server
+    state: present
+
+- name: Do rabbitmq_management
+  command: rabbitmq-plugins enable rabbitmq_management
+
+- name: Do rabbitmq_management
+  command: rabbitmqctl add_user homestead vagrant
+  ignore_errors: yes
+
+- name: Do rabbitmq_management
+  command: rabbitmqctl set_user_tags homestead administrator
+  ignore_errors: yes
+
+- name: Do rabbitmq_management
+  command: rabbitmqctl add_vhost /
+  ignore_errors: yes
+
+- name: Do rabbitmq_management
+  command: rabbitmqctl set_permissions -p / homestead .* .* .*
+  ignore_errors: yes

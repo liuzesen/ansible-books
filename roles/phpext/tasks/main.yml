@@ -1,0 +1,39 @@
+---
+
+- name: Add so to php mod conf
+  copy: src={{ item }} dest={{ so_path }}/{{ item }} force=yes
+  with_items:
+    - mongodb.so
+    - redis.so
+    - pcntl.so
+    - amqp.so
+  notify:
+    - restart phpfpm
+
+- name: Add ini to php mod conf
+  template: src={{ item }} dest={{ mod_path }}/{{ item }} force=yes
+  with_items:
+    - mongodb.ini
+    - redis.ini
+    - pcntl.ini
+    - amqp.ini
+  notify:
+    - restart phpfpm
+
+- name: Create symlink to so for cli
+  file: src={{ mod_path }}/{{ item }} dest={{ cli_mod_path }}/{{ item }} state=link
+  with_items:
+    - mongodb.ini
+    - redis.ini
+    - pcntl.ini
+    - amqp.ini
+
+- name: Create symlink to so for fpm
+  file: src={{ mod_path }}/{{ item }} dest={{ fpm_mod_path }}/{{ item }} state=link
+  with_items:
+    - mongodb.ini
+    - redis.ini
+    - pcntl.ini
+    - amqp.ini
+  notify:
+    - restart phpfpm

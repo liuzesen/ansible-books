@@ -1,0 +1,5 @@
+---
+mod_path: /etc/php/7.1/mods-available
+cli_mod_path: /etc/php/7.1/cli/conf.d
+fpm_mod_path: /etc/php/7.1/fpm/conf.d
+so_path: /usr/lib/php/20160303

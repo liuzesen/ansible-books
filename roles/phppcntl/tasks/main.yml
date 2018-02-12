@@ -1,0 +1,32 @@
+---
+
+- name: Creates directory
+  file: path={{ download_tmp }} state=directory
+
+- name: Unarchive php-7.1.0.tar.gz
+  unarchive: src=php-7.1.0.tar.gz dest={{ download_tmp }}
+
+- name: Do Phpize Pcntl
+  command: 'chdir={{ download_tmp }}/php-7.1.0/ext/pcntl phpize'
+
+- name: Configure
+  command: 'chdir={{ download_tmp }}/php-7.1.0/ext/pcntl ./configure'
+
+- name: Make Pcntl
+  command: 'chdir={{ download_tmp }}/php-7.1.0/ext/pcntl make'
+
+- name: Make Install The Pcntl
+  command: 'chdir={{ download_tmp }}/php-7.1.0/ext/pcntl make install'
+
+- name: Gen the ini file
+  copy: content="extension=pcntl.so" dest={{ so_ini_path }}/pcntl.ini force=yes
+
+- name: Fetch ini
+  fetch: dest=roles/phpext/templates/ src={{ so_ini_path }}/{{ item }} flat=yes
+  with_items:
+    - pcntl.ini
+
+- name: Fetch so
+  fetch: dest=roles/phpext/files/ src={{ so_path }}/{{ item }} flat=yes
+  with_items:
+    - pcntl.so

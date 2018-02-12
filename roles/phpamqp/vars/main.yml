@@ -1,2 +1,4 @@
 ---
 download_tmp: /home/vagrant/apps
+so_path: /usr/lib/php/20160303
+so_ini_path: /etc/php/7.1/mods-available

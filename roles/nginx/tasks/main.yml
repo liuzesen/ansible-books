@@ -1,0 +1,26 @@
+---
+
+- name: Copy dev.apps.gzh.qq.com
+  template: src=dev.apps.gzh.qq.com.j2 dest={{ nginx_site_path }}/dev.apps.gzh.qq.com
+  notify:
+    - restart nginx
+
+- name: Copy dev.gzh.qq.com
+  template: src=dev.gzh.qq.com.j2 dest={{ nginx_site_path }}/dev.gzh.qq.com
+  notify:
+    - restart nginx
+
+- name: Copy dev.gzhoss.oa.com
+  template: src=dev.gzhoss.oa.com.j2 dest={{ nginx_site_path }}/dev.gzhoss.oa.com
+  notify:
+    - restart nginx
+
+- name: Copy dev.gzhoss.qq.com
+  template: src=dev.gzhoss.qq.com.j2 dest={{ nginx_site_path }}/dev.gzhoss.qq.com
+  notify:
+    - restart nginx
+
+- name: Copy dev.study.qq.com
+  template: src=dev.study.qq.com.j2 dest={{ nginx_site_path }}/dev.study.qq.com
+  notify:
+    - restart nginx
